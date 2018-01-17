@@ -35,7 +35,7 @@ export class LimitBadgesExample implements OnInit {
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       enableSearchFilter: true,
-      badgeShowLimit: 3
+      badgeShowLimit: 0
     };
   }
   onItemSelect(item: any) {
