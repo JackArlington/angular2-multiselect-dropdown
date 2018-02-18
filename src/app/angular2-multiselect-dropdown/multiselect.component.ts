@@ -5,7 +5,7 @@ import { ListItem, MyException } from './multiselect.model';
 import { DropdownSettings } from './multiselect.interface';
 import { ClickOutsideDirective, ScrollDirective, styleDirective } from './clickOutside';
 import { ListFilterPipe } from './list-filter';
-import { Item, TemplateRenderer } from './menu-item';
+import { Item, Badge, TemplateRenderer } from './menu-item';
 
 export const DROPDOWN_CONTROL_VALUE_ACCESSOR: any = {
     provide: NG_VALUE_ACCESSOR,
@@ -55,6 +55,8 @@ export class AngularMultiSelect implements OnInit, ControlValueAccessor, OnChang
     onClose: EventEmitter<any> = new EventEmitter<any>();
 
     @ContentChild(Item) itemTempl: Item;
+    @ContentChild(Badge) badgeTempl: Badge;
+
 
     @ViewChild('searchInput') searchInput: ElementRef;
 
@@ -123,7 +125,6 @@ export class AngularMultiSelect implements OnInit, ControlValueAccessor, OnChang
         }
         if (changes.settings && !changes.settings.firstChange) { 
             this.settings = Object.assign(this.defaultSettings, this.settings);
-            console.log(this.settings);
         }
     }
     ngDoCheck() {
@@ -134,7 +135,9 @@ export class AngularMultiSelect implements OnInit, ControlValueAccessor, OnChang
         }
     }
     ngAfterViewInit() {
-        this._elementRef.nativeElement.getElementsByClassName("lazyContainer")[0].addEventListener('scroll', this.onScroll.bind(this));
+        if(this.settings.lazyLoading){
+            this._elementRef.nativeElement.getElementsByClassName("lazyContainer")[0].addEventListener('scroll', this.onScroll.bind(this));
+        }
     }
     onItemClick(item: ListItem, index: number, evt: Event) {
         if (this.settings.disabled) {
@@ -233,6 +236,7 @@ export class AngularMultiSelect implements OnInit, ControlValueAccessor, OnChang
         if (this.settings.singleSelection) {
             this.selectedItems = [];
             this.selectedItems.push(item);
+            this.closeDropdown();
         }
         else
             this.selectedItems.push(item);
@@ -316,7 +320,6 @@ export class AngularMultiSelect implements OnInit, ControlValueAccessor, OnChang
                 this.chunkIndex.push((i * this.itemHeight) + 'px');
                 this.chunkArray.push(this.data[i]);
         }
-        console.log(this.chunkArray);
     }
     public onScroll(e:any) {
         this.scrollTop = e.target.scrollTop;
@@ -361,7 +364,7 @@ export class AngularMultiSelect implements OnInit, ControlValueAccessor, OnChang
 
 @NgModule({
     imports: [CommonModule, FormsModule],
-    declarations: [AngularMultiSelect, ClickOutsideDirective, ScrollDirective, styleDirective, ListFilterPipe, Item, TemplateRenderer],
-    exports: [AngularMultiSelect, ClickOutsideDirective, ScrollDirective, styleDirective, ListFilterPipe, Item, TemplateRenderer]
+    declarations: [AngularMultiSelect, ClickOutsideDirective, ScrollDirective, styleDirective, ListFilterPipe, Item, TemplateRenderer, Badge],
+    exports: [AngularMultiSelect, ClickOutsideDirective, ScrollDirective, styleDirective, ListFilterPipe, Item, TemplateRenderer, Badge]
 })
 export class AngularMultiSelectModule { }
